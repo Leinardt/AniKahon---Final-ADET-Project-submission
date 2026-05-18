@@ -1,0 +1,376 @@
+  /* ================================================
+    AniKahon — Global Styles
+    Warm artisan palette matching the UI prototype
+    ================================================ */
+
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    /* Core brand colors from prototype */
+    --brown:        #A07850;
+    --brown-dark:   #7A5C34;
+    --brown-nav:    #9E7B52;      /* exact navbar bg */
+    --brown-header: #8C6B40;      /* category bar */
+    --brown-light:  #C8A47A;
+    --brown-pale:   #F0E8DC;
+    --cream:        #FAF7F2;
+    --cream-dark:   #F2EBE0;
+
+    /* Button colors from prototype */
+    --btn-green:    #9DC08B;      /* Login / Confirm / Add to Cart */
+    --btn-pink:     #E8A0A0;      /* Sign Up / Cancel / secondary */
+    --btn-green-hover: #85AD72;
+    --btn-pink-hover:  #D88888;
+
+    /* Text */
+    --text-dark:    #2C2218;
+    --text-mid:     #5C4A32;
+    --text-light:   #9C8A78;
+    --text-muted:   #B8A898;
+
+    /* UI */
+    --border:       #E0D4C4;
+    --border-light: #EDE6DA;
+    --white:        #FFFFFF;
+    --shadow-sm:    0 1px 4px rgba(120, 80, 40, 0.08);
+    --shadow-md:    0 4px 16px rgba(120, 80, 40, 0.12);
+    --shadow-lg:    0 8px 32px rgba(120, 80, 40, 0.16);
+
+    /* Status colors */
+    --status-pay:       #E8A050;
+    --status-confirmed: #6BAE75;
+    --status-cancelled: #C87070;
+    --status-completed: #5A8EBF;
+
+    /* Typography */
+    /* Typography */
+--font-display: 'Poppins', sans-serif;
+--font-body:    'Poppins', sans-serif;
+
+    /* Spacing */
+    --page-pad:   64px;
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  16px;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--text-dark);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  button { font-family: var(--font-body); cursor: pointer; }
+  input, select, textarea { font-family: var(--font-body); }
+  img { display: block; max-width: 100%; }
+
+  /* ── Shared button styles ── */
+  .btn-green {
+    background: var(--btn-green);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 24px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s;
+    width: 100%;
+  }
+  .btn-green:hover  { background: var(--btn-green-hover); transform: translateY(-1px); }
+  .btn-green:active { transform: translateY(0); }
+
+  .btn-pink {
+    background: var(--btn-pink);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 24px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s;
+    width: 100%;
+  }
+  .btn-pink:hover  { background: var(--btn-pink-hover); transform: translateY(-1px); }
+  .btn-pink:active { transform: translateY(0); }
+
+  /* ── Shared input style ── */
+  .field-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    padding: 9px 4px;
+    font-size: 14px;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .field-input::placeholder { color: var(--text-muted); }
+  .field-input:focus { border-bottom-color: var(--brown); }
+
+  /* ── Filled input (profile page) ── */
+  .field-filled {
+    width: 100%;
+    background: var(--cream-dark);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .field-filled:focus { border-color: var(--brown); }
+
+  /* ── Page wrapper ── */
+  .page-body {
+    min-height: calc(100vh - 100px);
+    padding: 32px var(--page-pad);
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ── Section title ── */
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--brown-dark);
+    margin-bottom: 20px;
+  }
+
+  /* ── Status badge ── */
+  .status-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+  .status-topay     { color: var(--status-pay);       background: #FFF3E0; }
+  .status-confirmed { color: var(--status-confirmed);  background: #E8F5E9; }
+  .status-completed { color: var(--status-completed);  background: #E3F0FB; }
+  .status-cancelled { color: var(--status-cancelled);  background: #FDECEA; }
+
+  /* ── Error message ── */
+  .error-msg {
+    color: #C0392B;
+    background: #FDECEA;
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  /* ── Success toast ── */
+  .success-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--cream-dark);
+    border: 1px solid var(--btn-green);
+    border-radius: var(--radius-md);
+    padding: 14px 32px;
+    text-align: center;
+    color: var(--brown-dark);
+    font-weight: 600;
+    font-size: 14px;
+    z-index: 9999;
+    box-shadow: var(--shadow-lg);
+    animation: fadeInUp 0.3s ease;
+  }
+  .success-toast .toast-check { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ── Spinner ── */
+  .spinner-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--brown);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Divider ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Quantity control ── */
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    width: fit-content;
+  }
+  .qty-btn {
+    width: 32px; height: 32px;
+    background: var(--cream-dark);
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--brown-dark);
+    transition: background 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qty-btn:hover { background: var(--border); }
+  .qty-num {
+    width: 44px; height: 32px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    background: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    outline: none;
+  }
+
+  /* ── Tab nav ── */
+  /* Tab Navigation - Fixed Border */
+.tab-nav {
+  display: flex;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 24px;
+  background: transparent;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.18s, border-color 0.18s;
+  background: none;
+}
+
+.tab-item.active {
+  color: var(--brown-dark);
+  font-weight: 700;
+  border-bottom-color: var(--brown);
+}
+
+.tab-item:hover:not(.active) {
+  color: var(--brown);
+}
+
+  /* ── Empty state ── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 64px 0;
+    color: var(--text-muted);
+  }
+  .empty-state .empty-icon { font-size: 48px; opacity: 0.5; }
+  .empty-state p { font-size: 15px; }
+  /* Flying animation for add to cart */
+@keyframes flyToCart {
+  0% {
+    transform: scale(1) translate(0, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8) translate(var(--fly-x, 0), var(--fly-y, 0));
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0.3) translate(var(--fly-x, 0), var(--fly-y, 0));
+    opacity: 0;
+  }
+}
+
+/* Flying animation for add to cart */
+.flying-item {
+  position: fixed;
+  z-index: 9999;
+  border-radius: 50%;
+  object-fit: cover;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.cart-bump {
+  animation: cartBump 0.3s ease-in-out;
+}
+
+@keyframes cartBump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Heart pop animation for favorites */
+@keyframes heartPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.heart-pop {
+  position: fixed;
+  z-index: 9999;
+  font-size: 24px;
+  pointer-events: none;
+  animation: heartPop 0.5s ease-out forwards;
+}
