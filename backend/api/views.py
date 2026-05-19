@@ -7,10 +7,140 @@ from rest_framework.response import Response
 from rest_framework import status
 from decimal import Decimal
 import json
+import os
+import re
 from .models import *
 from .serializers import *   
 from django.db.models import Q
 from django.db.models import Sum
+from urllib import request as urlrequest
+from urllib.error import HTTPError, URLError
+
+
+def _format_price(value):
+    return f"PHP {Decimal(value):,.2f}"
+
+
+def _available_products(limit=4):
+    return list(
+        Product.objects.select_related('Category')
+        .filter(StockQuantity__gt=0)
+        .order_by('Category__CategoryType', 'ProductName')[:limit]
+    )
+
+
+def _style_products(products, message):
+    if 'cute' not in message and 'pretty' not in message and 'lovely' not in message:
+        return products
+
+    cute_words = ['charm', 'keychain', 'hair', 'clip', 'earring', 'necklace', 'shell']
+
+    def cute_score(product):
+        text = f"{product.ProductName} {product.Category.CategoryType}".lower()
+        return sum(word in text for word in cute_words)
+
+    styled = sorted(products, key=lambda product: cute_score(product), reverse=True)
+    return styled if cute_score(styled[0]) else products
+
+
+def _store_context():
+    categories = Category.objects.order_by('CategoryType').values_list('CategoryType', flat=True)
+    active_vouchers = Voucher.objects.filter(IsActive=True).order_by('VoucherCode')[:10]
+    voucher_lines = [
+        (
+            f"- {v.VoucherCode}: {v.DiscountType} discount, value {v.DiscountValue}, "
+            f"minimum purchase PHP {v.MinPurchase}, valid for {v.get_PaymentMethodCondition_display()}"
+        )
+        for v in active_vouchers
+    ]
+
+    return f"""
+AniKahon system context:
+- AniKahon sells handcrafted accessories through an online catalog.
+- Product categories currently include: {', '.join(categories) if categories else 'No categories listed'}.
+- Products have a name, category, description, unit price, and stock quantity.
+- StockQuantity means how many units are currently available. If stock is 0, the item is unavailable.
+- Customers can browse products, open a product page, choose a quantity, add to cart, favorite items, and checkout.
+- Checkout supports order placement with delivery address or pickup details when applicable.
+- Orders can be To Pay, Confirmed, Completed, or Cancelled.
+- Vouchers may have minimum purchase, usage limits, payment method conditions, maximum discount, and first-purchase-only rules.
+- Active voucher summary: {chr(10).join(voucher_lines) if voucher_lines else 'No active vouchers listed'}.
+- GabAI is only a product assistant. It can guide customers, recommend available items, explain prices and availability, and explain how to order.
+- GabAI must not claim it placed an order, applied a voucher, changed cart contents, updated account details, or contacted staff.
+- GabAI must not invent products, stock, discounts, payment rules, delivery rules, or admin-only actions.
+- When the customer uses casual shopping language like "cute", "pretty", "simple", "gift", or "something", infer they want recommendations and use the product catalog.
+""".strip()
+
+
+def _product_context():
+    products = Product.objects.select_related('Category').order_by('Category__CategoryType', 'ProductName')[:80]
+    product_lines = [
+        (
+            f"- {p.ProductName} | Category: {p.Category.CategoryType} | "
+            f"Description: {p.ProductDescription or 'No description'} | "
+            f"Price: PHP {p.UnitPrice} | Stock: {p.StockQuantity}"
+        )
+        for p in products
+    ]
+    return chr(10).join(product_lines) if product_lines else 'No products are currently listed.'
+
+
+def _gabai_local_reply(user_message):
+    return (
+        "GabAI is not connected to Gemini right now. Please restart the backend with GEMINI_API_KEY set, "
+        "then I can answer normally again."
+    )
+
+
+def _get_gemini_api_key():
+    api_key = os.environ.get('GEMINI_API_KEY')
+    if api_key:
+        return api_key.strip().strip('"').strip("'")
+
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+    if not os.path.exists(env_path):
+        return ''
+
+    with open(env_path, 'r', encoding='utf-8') as env_file:
+        for line in env_file:
+            key, separator, value = line.partition('=')
+            if separator and key.strip() == 'GEMINI_API_KEY':
+                return value.strip().strip('"').strip("'")
+
+    return ''
+
+
+def _clean_gabai_answer(text):
+    answer = (text or '').strip()
+    answer = re.sub(r'\*\*(.*?)\*\*', r'\1', answer)
+    answer = re.sub(r'^\s*[-*]\s+', '', answer, flags=re.MULTILINE)
+    answer = re.sub(r'\n{3,}', '\n\n', answer)
+    return answer.strip()
+
+
+def _gemini_error_message(detail):
+    try:
+        data = json.loads(detail)
+    except json.JSONDecodeError:
+        return 'Gemini rejected the request. Please check the API key and Gemini API access.'
+
+    error = data.get('error') or {}
+    status_code = error.get('code')
+    status_text = error.get('status')
+    message = error.get('message') or ''
+
+    if status_code == 429 or status_text == 'RESOURCE_EXHAUSTED':
+        retry_match = re.search(r'Please retry in ([^.]+(?:\.[0-9]+)?s)', message)
+        retry_text = f" Try again in about {retry_match.group(1)}." if retry_match else ''
+        return f"Gemini quota was reached for this API key.{retry_text}"
+
+    if status_text == 'INVALID_ARGUMENT' and 'API key not valid' in message:
+        return 'Gemini rejected the API key. Please check that GEMINI_API_KEY is valid.'
+
+    if status_text == 'PERMISSION_DENIED':
+        return 'Gemini API access is blocked for this key. Enable the Generative Language API or update key restrictions.'
+
+    return 'Gemini rejected the request. Check that the API key is valid and the Generative Language API is enabled.'
 
 # ─── AUTH 
 
@@ -467,6 +597,103 @@ def admin_reports(request):
         return Response(list(products))
 
     return Response({'error': 'Unknown report type'}, status=400)
+
+@csrf_exempt
+@api_view(['POST'])
+def gabai_chat(request):
+    user_message = (request.data.get('message') or '').strip()
+    history = request.data.get('history') or []
+
+    if not user_message:
+        return Response({'error': 'Message is required'}, status=400)
+
+    api_key = _get_gemini_api_key()
+    if not api_key:
+        return Response({'reply': _gabai_local_reply(user_message)})
+
+    short_history = []
+    for item in history[-6:]:
+        role = item.get('role', 'user')
+        content = (item.get('content') or '').strip()
+        if content:
+            short_history.append(f"{role}: {content}")
+
+    prompt = f"""
+You are GabAI, AniKahon's friendly product assistant.
+Use the system context and live catalog below as your source of truth.
+Understand casual customer wording and infer the shopping intent from the conversation.
+Answer directly and helpfully in 1 to 5 short sentences.
+For recommendations, name 2 to 4 available products and briefly say why they fit.
+If a customer asks about a category, style, budget, price, stock, voucher, cart, checkout, pickup, delivery, or order status, answer from the context.
+If the answer is not in the context, say what you can help with instead of inventing details.
+Use plain text only. Do not use Markdown, asterisks, numbered lists, or bullet formatting.
+
+{_store_context()}
+
+Live product catalog:
+{_product_context()}
+
+Recent conversation:
+{chr(10).join(short_history) if short_history else 'None'}
+
+Customer: {user_message}
+GabAI:
+""".strip()
+
+    payload = {
+        'contents': [
+            {
+                'parts': [
+                    {'text': prompt}
+                ]
+            }
+        ],
+        'generationConfig': {
+            'temperature': 0.4,
+            'maxOutputTokens': 700,
+        },
+    }
+
+    endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+    req = urlrequest.Request(
+        endpoint,
+        data=json.dumps(payload).encode('utf-8'),
+        headers={
+            'Content-Type': 'application/json',
+            'x-goog-api-key': api_key,
+        },
+        method='POST',
+    )
+
+    try:
+        with urlrequest.urlopen(req, timeout=20) as res:
+            result = json.loads(res.read().decode('utf-8'))
+    except HTTPError as exc:
+        detail = exc.read().decode('utf-8', errors='ignore')
+        return Response({
+            'error': _gemini_error_message(detail),
+            'detail': detail,
+        }, status=502)
+    except URLError as exc:
+        return Response({
+            'error': 'Could not connect to Gemini. Check your internet connection or firewall.',
+            'detail': str(exc.reason),
+        }, status=502)
+
+    candidates = result.get('candidates') or []
+    candidate = candidates[0] if candidates else {}
+    parts = candidate.get('content', {}).get('parts', [])
+    answer = _clean_gabai_answer(''.join(part.get('text', '') for part in parts))
+
+    if not answer or candidate.get('finishReason') == 'MAX_TOKENS':
+        return Response({
+            'error': 'Gemini returned an empty or incomplete answer. Please try again.',
+            'detail': candidate.get('finishReason') or 'empty response',
+        }, status=502)
+
+    return Response({'reply': answer})
+
+
 @api_view(['GET'])
 def available_vouchers(request, user_id):
     from decimal import Decimal

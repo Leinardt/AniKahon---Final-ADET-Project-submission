@@ -1,0 +1,295 @@
+.gabai {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1000;
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.gabai-launcher {
+  width: 74px;
+  height: 74px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brown-nav, #5d4037);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 12px 26px rgba(60, 36, 24, 0.26);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 9px 5px 7px;
+}
+
+.gabai-launcher .gabai-avatar {
+  transform: translateY(2px);
+}
+
+.gabai-launcher-label {
+  display: block;
+  font-size: 12px;
+  line-height: 1;
+  margin-top: 3px;
+}
+
+.gabai-panel {
+  width: min(360px, calc(100vw - 32px));
+  height: min(540px, calc(100vh - 120px));
+  margin-bottom: 14px;
+  background: #fff;
+  border: 1px solid var(--border-light, #eadfd4);
+  border-radius: 8px;
+  box-shadow: 0 16px 44px rgba(60, 36, 24, 0.22);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gabai-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--brown-nav, #5d4037);
+  color: #fff;
+}
+
+.gabai-header > div {
+  flex: 1;
+}
+
+.gabai-avatar {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 34px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #fecfcf 0%, #eef5d8 100%);
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow: inset 0 -3px 0 rgba(120, 82, 58, 0.12);
+}
+
+.gabai-avatar.compact {
+  width: 34px;
+  height: 30px;
+  border-radius: 12px;
+  flex: 0 0 auto;
+}
+
+.gabai-avatar::before,
+.gabai-avatar::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  width: 4px;
+  height: 4px;
+  background: rgba(246, 211, 211, 0.9);
+  border-radius: 999px;
+}
+
+.gabai-avatar::before {
+  left: 6px;
+}
+
+.gabai-avatar::after {
+  right: 6px;
+}
+
+.gabai-avatar-antenna {
+  position: absolute;
+  left: 50%;
+  top: -9px;
+  width: 2px;
+  height: 9px;
+  background: #f3ddd0;
+  transform: translateX(-50%);
+}
+
+.gabai-avatar-antenna::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f2bfd0;
+  transform: translateX(-50%);
+}
+
+.gabai-avatar-bow {
+  position: absolute;
+  right: -5px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  background: #d987a4;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(35deg);
+}
+
+.gabai-avatar-bow::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 2px;
+  width: 10px;
+  height: 10px;
+  background: #d987a4;
+  border-radius: 50% 50% 0 50%;
+}
+
+.gabai-avatar-eye {
+  position: absolute;
+  top: 14px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4f3326;
+}
+
+.gabai-avatar-eye.left {
+  left: 11px;
+}
+
+.gabai-avatar-eye.right {
+  right: 11px;
+}
+
+.gabai-avatar-cheek {
+  position: absolute;
+  top: 21px;
+  width: 7px;
+  height: 3px;
+  border-radius: 999px;
+  background: #eeb0bd;
+  opacity: 0.7;
+}
+
+.gabai-avatar-cheek.left {
+  left: 7px;
+}
+
+.gabai-avatar-cheek.right {
+  right: 7px;
+}
+
+.gabai-avatar-smile {
+  position: absolute;
+  left: 50%;
+  top: 19px;
+  width: 13px;
+  height: 7px;
+  border-bottom: 2px solid #4f3326;
+  border-radius: 0 0 999px 999px;
+  transform: translateX(-50%);
+}
+
+.gabai-header strong,
+.gabai-header span {
+  display: block;
+}
+
+.gabai-header strong {
+  font-size: 17px;
+}
+
+.gabai-header span {
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.82;
+}
+
+.gabai-header button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gabai-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--cream, #fbf7f1);
+}
+
+.gabai-message {
+  max-width: 86%;
+  width: fit-content;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.gabai-message.assistant {
+  background: #fff;
+  color: var(--text-dark, #2e211b);
+  border: 1px solid var(--border-light, #eadfd4);
+}
+
+.gabai-message.user {
+  margin-left: auto;
+  background: var(--brown-nav, #5d4037);
+  color: #fff;
+}
+
+.gabai-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border-light, #eadfd4);
+  background: #fff;
+}
+
+.gabai-form input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border-light, #eadfd4);
+  border-radius: 8px;
+  padding: 10px 11px;
+  font-size: 14px;
+  outline: none;
+}
+
+.gabai-form input:focus {
+  border-color: var(--brown-nav, #5d4037);
+}
+
+.gabai-form button {
+  border: 0;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: var(--brown-nav, #5d4037);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gabai-form button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .gabai {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .gabai-panel {
+    height: min(520px, calc(100vh - 100px));
+  }
+}

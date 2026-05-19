@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard';
 import { getProducts } from '../api';
 import '../styles/variables.css';
 
-const SORT_OPTIONS = ['Relevance', 'Top Sales', 'Top Rated', 'Price ▲', 'Price ▼'];
+const SORT_OPTIONS = ['Relevance', 'Top Sales', 'Price ▲', 'Price ▼'];
 
 export default function Catalog() {
   const [searchParams]          = useSearchParams();
@@ -49,9 +49,6 @@ export default function Catalog() {
     }
     if (sort === 'Top Sales') {
       return [...products].sort((a, b) => (b.total_sold || 0) - (a.total_sold || 0));
-    }
-    if (sort === 'Top Rated') {
-      return [...products].sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0));
     }
     // Relevance - keep as is from server
     return products;

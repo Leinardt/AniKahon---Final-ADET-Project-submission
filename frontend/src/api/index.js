@@ -52,3 +52,7 @@ export const adminAddVoucher = (data)       => API.post('/admin/vouchers/', data
 export const adminUpdateVoucher = (id, data) => API.put(`/admin/vouchers/${id}/`, data);
 export const adminDeleteVoucher = (id, aID)=> API.delete(`/admin/vouchers/${id}/`, { data: { adminID: aID } });
 export const adminGetReports = (params)     => API.get('/admin/reports/', { params });
+
+// GabAI
+export const sendGabaiMessage = (message, history = []) =>
+  API.post('/gabai/chat/', { message, history });

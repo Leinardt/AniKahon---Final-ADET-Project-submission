@@ -42,4 +42,5 @@ urlpatterns = [
     path('admin/vouchers/',            views.admin_vouchers,       name='admin_vouchers'),
     path('admin/vouchers/<int:pk>/',   views.admin_voucher_detail, name='admin_voucher_detail'),
     path('admin/reports/',             views.admin_reports,        name='admin_reports'),
+    path('gabai/chat/',                views.gabai_chat,           name='gabai_chat'),
 ]

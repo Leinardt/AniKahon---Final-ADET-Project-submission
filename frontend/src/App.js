@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './styles/variables.css';
 
@@ -15,6 +15,7 @@ import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Favorites from './pages/Favorites';
 import Profile from './pages/Profile';
+import GabAIChat from './components/GabAIChat';
 
 // Admin pages
 import AdminLogin from './pages/admin/AdminLogin';
@@ -32,6 +33,14 @@ function ProtectedRoute({ children }) {
 function AdminRoute({ children }) {
   const { admin } = useAuth();
   return admin ? children : <Navigate to="/admin/login" />;
+}
+
+function GabAIRouteToggle() {
+  const { pathname } = useLocation();
+  const hideOnAuth = pathname === '/login' || pathname === '/register';
+  const hideOnAdmin = pathname.startsWith('/admin');
+
+  return hideOnAuth || hideOnAdmin ? null : <GabAIChat />;
 }
 
 export default function App() {
@@ -57,6 +66,7 @@ export default function App() {
           <Route path="/admin/vouchers" element={<AdminRoute><AdminVouchers /></AdminRoute>} />
           <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
         </Routes>
+        <GabAIRouteToggle />
       </BrowserRouter>
     </AuthProvider>
   );

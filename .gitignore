@@ -1,8 +1,11 @@
 #Dependencies
 node_modules/
 venv/
+.venv/
+backend/.venv/
 .env
 .vscode/
 *.pyc
 __pycache__/
 db.sqlite3
+*.log
