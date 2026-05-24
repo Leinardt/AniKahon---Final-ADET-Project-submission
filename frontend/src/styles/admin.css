@@ -124,7 +124,7 @@
   border-radius: 8px;
   background: rgba(200,112,112,0.12);
   border: 1px solid rgba(200,112,112,0.25);
-  color: #E8A0A0;
+  color: var(--btn-pink);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;

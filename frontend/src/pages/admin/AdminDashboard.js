@@ -182,7 +182,7 @@ const DONUT_COLORS = {
   'To Pay':    '#A07850',   /* brand brown       */
   'Confirmed': '#9DC08B',   /* btn-green         */
   'Completed': '#7A5C34',   /* brown-dark        */
-  'Cancelled': '#E8A0A0',   /* btn-pink          */
+  'Cancelled': '#C87070',   /* btn-pink          */
 };
 
 function OrderSummaryDonut({ segments }) {

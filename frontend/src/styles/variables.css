@@ -18,9 +18,9 @@
 
     /* Button colors from prototype */
     --btn-green:    #9DC08B;      /* Login / Confirm / Add to Cart */
-    --btn-pink:     #E8A0A0;      /* Sign Up / Cancel / secondary */
+    --btn-pink:     #C87070;      /* Sign Up / Cancel / secondary */
     --btn-green-hover: #85AD72;
-    --btn-pink-hover:  #D88888;
+    --btn-pink-hover:  #B85F5F;
 
     /* Text */
     --text-dark:    #2C2218;

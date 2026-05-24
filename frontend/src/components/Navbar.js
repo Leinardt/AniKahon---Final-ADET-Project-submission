@@ -258,7 +258,7 @@ const S = {
     position: 'absolute', 
     top: -4, 
     right: -4, 
-    background: '#E8A0A0', 
+    background: 'var(--btn-pink)', 
     color: '#2C2C2C', 
     fontSize: 10, 
     fontWeight: 700, 
