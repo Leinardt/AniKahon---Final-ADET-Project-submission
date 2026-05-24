@@ -1,1 +1,0 @@
-# Django test package initialization
